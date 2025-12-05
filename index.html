@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bottle Bingo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Game Screen */
+        .game-screen {
+            display: block;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .game-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .board-limit-info {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+
+        .bingo-status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Bingo Grid */
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bingo-cell:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .bingo-cell.crossed {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+
+        .bingo-cell.crossed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: #8b5cf6;
+            font-weight: bold;
+        }
+
+        .bottle-image {
+            width: 100%;
+            height: 60%;
+            object-fit: contain;
+            margin-bottom: 0.25rem;
+            opacity: 0.9;
+        }
+
+        .bingo-cell.crossed .bottle-image {
+            opacity: 0.3;
+        }
+
+        .bottle-name {
+            font-size: 0.65rem;
+            text-align: center;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay-content {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+        }
+
+        .overlay-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .overlay-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+        }
+
+        .overlay-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .overlay-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .overlay-actions .btn {
+            flex: 1;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍸 Bottle Bingo</h1>
+            <p class="subtitle">Spot the bottles, get a bingo!</p>
+        </header>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="game-header">
+                <div class="game-info">
+                    <div class="bingo-status hidden" id="bingoStatus">🎉 BINGO! 🎉</div>
+                    <div class="board-limit-info" id="boardLimitInfo">New boards today: 0/3</div>
+                </div>
+                <div class="game-actions">
+                    <button class="btn btn-small btn-secondary" id="shuffleBtn">Shuffle</button>
+                    <button class="btn btn-small btn-primary" id="newBoardBtn">New Board</button>
+                    <button class="btn btn-small btn-secondary" id="startGameBtn">Start Game</button>
+                    <button class="btn btn-small btn-warning hidden" id="endGameBtn">End Game</button>
+                </div>
+            </div>
+
+            <div class="bingo-grid" id="bingoGrid"></div>
+        </div>
+
+        <!-- Overlay -->
+        <div class="overlay" id="overlay">
+            <div class="overlay-content">
+                <button class="overlay-close" id="overlayClose">×</button>
+                <img class="overlay-image" id="overlayImage" src="" alt="">
+                <h2 class="overlay-title" id="overlayTitle"></h2>
+                <div class="overlay-actions">
+                    <button class="btn btn-secondary" id="overlayToggleBtn">Mark Found</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bingo Modal -->
+        <div class="overlay" id="bingoModal">
+            <div class="overlay-content">
+                <h2 class="overlay-title">🎉 BINGO! 🎉</h2>
+                <p style="text-align: center; margin: 1rem 0;">Congratulations! You got a bingo!</p>
+                <div class="overlay-actions">
+                    <button class="btn btn-primary" id="newGameBtn">New Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock bottle data - will be replaced with bottles.json
+        const BOTTLES = [
+            { name: "Italicus", image: "images/italicus.jpg" },
+            { name: "Empirical", image: "images/empirical.jpg" },
+            { name: "Sfumato", image: "images/sfumato.jpg" },
+            { name: "Nux Alpina", image: "images/nux-alpina.jpg" },
+            { name: "El Buho", image: "images/el-buho.jpg" },
+            { name: "Real McCoy", image: "images/real-mccoy.jpg" },
+            { name: "Giffard Passion Fruit", image: "images/giffard-passion.jpg" },
+            { name: "Banana Liqueur", image: "images/banana-liqueur.jpg" },
+            { name: "Alp Genepy", image: "images/alp-genepy.jpg" },
+            { name: "Jin Jiji", image: "images/jin-jiji.jpg" },
+            { name: "Jaja", image: "images/jaja.jpg" },
+            { name: "Yola", image: "images/yola.jpg" },
+            { name: "The Scarlet Ibis", image: "images/scarlet-ibis.jpg" },
+            { name: "Tapatio 110", image: "images/tapatio-110.jpg" },
+            { name: "Barrel Seagrass", image: "images/barrel-seagrass.jpg" },
+            { name: "Giffard Grenadine", image: "images/giffard-grenadine.jpg" },
+            { name: "Sirene Bitter", image: "images/sirene-bitter.jpg" },
+            { name: "Nixta", image: "images/nixta.jpg" },
+            { name: "Ancho Reyes", image: "images/ancho-reyes.jpg" },
+            { name: "Malort", image: "images/malort.jpg" },
+            { name: "St George Terroir", image: "images/st-george.jpg" },
+            { name: "Braulio", image: "images/braulio.jpg" },
+            { name: "Becherovka", image: "images/becherovka.jpg" },
+            { name: "Mekhong", image: "images/mekhong.jpg" },
+            { name: "Tempus Fugit Violettes", image: "images/tempus-fugit.jpg" },
+            { name: "Pairideza Creme de Banane", image: "images/pairideza.jpg" },
+            { name: "Horse with No Name", image: "images/horse-no-name.jpg" }
+        ];
+
+        const MAX_DAILY_BOARDS = 3;
+
+        // State management
+        let gameState = {
+            board: [],
+            crossed: [],
+            gameStarted: false,
+            boardsUsedToday: 0,
+            lastResetDate: null
+        };
+
+        // DOM elements
+        const gameScreen = document.getElementById('gameScreen');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const endGameBtn = document.getElementById('endGameBtn');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const newBoardBtn = document.getElementById('newBoardBtn');
+        const bingoGrid = document.getElementById('bingoGrid');
+        const bingoStatus = document.getElementById('bingoStatus');
+        const boardLimitInfo = document.getElementById('boardLimitInfo');
+        const overlay = document.getElementById('overlay');
+        const overlayClose = document.getElementById('overlayClose');
+        const overlayImage = document.getElementById('overlayImage');
+        const overlayTitle = document.getElementById('overlayTitle');
+        const overlayToggleBtn = document.getElementById('overlayToggleBtn');
+        const bingoModal = document.getElementById('bingoModal');
+        const newGameBtn = document.getElementById('newGameBtn');
+
+        let currentOverlayIndex = null;
+
+        // Check if we need to reset daily limit
+        function checkDailyReset() {
+            const today = new Date().toDateString();
+            if (gameState.lastResetDate !== today) {
+                gameState.boardsUsedToday = 0;
+                gameState.lastResetDate = today;
+                saveState();
+            }
+        }
+
+        // Update board limit display
+        function updateBoardLimitDisplay() {
+            boardLimitInfo.textContent = `New boards today: ${gameState.boardsUsedToday}/${MAX_DAILY_BOARDS}`;
+            newBoardBtn.disabled = gameState.gameStarted || gameState.boardsUsedToday >= MAX_DAILY_BOARDS;
+        }
+
+        // Update button states
+        function updateButtonStates() {
+            if (gameState.gameStarted) {
+                shuffleBtn.classList.add('hidden');
+                newBoardBtn.classList.add('hidden');
+                startGameBtn.classList.add('hidden');
+                endGameBtn.classList.remove('hidden');
+            } else {
+                shuffleBtn.classList.remove('hidden');
+                newBoardBtn.classList.remove('hidden');
+                startGameBtn.classList.remove('hidden');
+                endGameBtn.classList.add('hidden');
+            }
+            updateBoardLimitDisplay();
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('bottleBingoState');
+            if (saved) {
+                gameState = JSON.parse(saved);
+                checkDailyReset();
+            } else {
+                // First time - generate initial board
+                generateBoard();
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('bottleBingoState', JSON.stringify(gameState));
+        }
+
+        // Generate random board
+        function generateBoard() {
+            checkDailyReset();
+            
+            if (gameState.boardsUsedToday >= MAX_DAILY_BOARDS) {
+                alert(`You've used all ${MAX_DAILY_BOARDS} new boards for today. Get a bingo to reset!`);
+                return;
+            }
+
+            const shuffled = [...BOTTLES].sort(() => Math.random() - 0.5);
+            gameState.board = shuffled.slice(0, 25);
+            gameState.crossed = new Array(25).fill(false);
+            gameState.gameStarted = false;
+            gameState.boardsUsedToday++;
+            saveState();
+            updateButtonStates();
+            renderBoard();
+        }
+
+        // Shuffle current board
+        function shuffleBoard() {
+            gameState.board = [...gameState.board].sort(() => Math.random() - 0.5);
+            saveState();
+            renderBoard();
+        }
+
+        // Start game
+        function startGame() {
+            gameState.gameStarted = true;
+            saveState();
+            updateButtonStates();
+        }
+
+        // End game
+        function endGame() {
+            if (confirm('Are you sure you want to end the current game? A new board will be generated.')) {
+                gameState.gameStarted = false;
+                gameState.crossed = new Array(25).fill(false);
+                
+                // Generate new board
+                const shuffled = [...BOTTLES].sort(() => Math.random() - 0.5);
+                gameState.board = shuffled.slice(0, 25);
+                
+                saveState();
+                updateButtonStates();
+                renderBoard();
+            }
+        }
+
+        // Render board
+        function renderBoard() {
+            bingoGrid.innerHTML = '';
+            gameState.board.forEach((bottle, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'bingo-cell';
+                if (gameState.crossed[index]) {
+                    cell.classList.add('crossed');
+                }
+
+                // For demo, use placeholder image
+                const img = document.createElement('div');
+                img.className = 'bottle-image';
+                img.style.background = `linear-gradient(135deg, 
+                    hsl(${index * 15}, 70%, 60%) 0%, 
+                    hsl(${index * 15 + 30}, 70%, 50%) 100%)`;
+                img.style.borderRadius = '4px';
+
+                const name = document.createElement('div');
+                name.className = 'bottle-name';
+                name.textContent = bottle.name;
+
+                cell.appendChild(img);
+                cell.appendChild(name);
+
+                cell.addEventListener('click', () => openOverlay(index));
+
+                bingoGrid.appendChild(cell);
+            });
+
+            checkBingo();
+        }
+
+        // Open overlay
+        function openOverlay(index) {
+            if (!gameState.gameStarted) return;
+            
+            currentOverlayIndex = index;
+            const bottle = gameState.board[index];
+            overlayTitle.textContent = bottle.name;
+            
+            // Create placeholder for demo
+            const placeholderColor = `linear-gradient(135deg, 
+                hsl(${index * 15}, 70%, 60%) 0%, 
+                hsl(${index * 15 + 30}, 70%, 50%) 100%)`;
+            overlayImage.style.background = placeholderColor;
+            overlayImage.style.height = '300px';
+            overlayImage.style.borderRadius = '8px';
+
+            const isCrossed = gameState.crossed[index];
+            overlayToggleBtn.textContent = isCrossed ? 'Unmark' : 'Mark Found';
+            overlayToggleBtn.className = isCrossed ? 'btn btn-primary' : 'btn btn-secondary';
+
+            overlay.classList.add('active');
+        }
+
+        // Close overlay
+        function closeOverlay() {
+            overlay.classList.remove('active');
+            currentOverlayIndex = null;
+        }
+
+        // Toggle crossed state
+        function toggleCrossed() {
+            if (currentOverlayIndex !== null) {
+                gameState.crossed[currentOverlayIndex] = !gameState.crossed[currentOverlayIndex];
+                saveState();
+                renderBoard();
+                closeOverlay();
+            }
+        }
+
+        // Check for bingo
+        function checkBingo() {
+            if (!gameState.gameStarted) {
+                bingoStatus.classList.add('hidden');
+                return;
+            }
+
+            const grid = gameState.crossed;
+            let hasBingo = false;
+
+            // Check rows
+            for (let i = 0; i < 5; i++) {
+                if (grid.slice(i * 5, i * 5 + 5).every(val => val)) {
+                    hasBingo = true;
+                }
+            }
+
+            // Check columns
+            for (let i = 0; i < 5; i++) {
+                if ([0, 1, 2, 3, 4].every(row => grid[row * 5 + i])) {
+                    hasBingo = true;
+                }
+            }
+
+            // Check diagonals
+            if ([0, 6, 12, 18, 24].every(i => grid[i])) {
+                hasBingo = true;
+            }
+            if ([4, 8, 12, 16, 20].every(i => grid[i])) {
+                hasBingo = true;
+            }
+
+            if (hasBingo) {
+                bingoStatus.classList.remove('hidden');
+                showBingoModal();
+            } else {
+                bingoStatus.classList.add('hidden');
+            }
+        }
+
+        // Show bingo modal
+        function showBingoModal() {
+            bingoModal.classList.add('active');
+        }
+
+        // Close bingo modal
+        function closeBingoModal() {
+            bingoModal.classList.remove('active');
+        }
+
+        // Start new game after bingo
+        function startNewGame() {
+            // Reset daily limit since they got bingo
+            gameState.boardsUsedToday = 0;
+            gameState.gameStarted = false;
+            gameState.crossed = new Array(25).fill(false);
+            saveState();
+            closeBingoModal();
+            updateButtonStates();
+            renderBoard();
+        }
+
+        // Event listeners
+        startGameBtn.addEventListener('click', startGame);
+        endGameBtn.addEventListener('click', endGame);
+        shuffleBtn.addEventListener('click', shuffleBoard);
+        newBoardBtn.addEventListener('click', generateBoard);
+        overlayClose.addEventListener('click', closeOverlay);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeOverlay();
+        });
+        overlayToggleBtn.addEventListener('click', toggleCrossed);
+        newGameBtn.addEventListener('click', startNewGame);
+        bingoModal.addEventListener('click', (e) => {
+            if (e.target === bingoModal) closeBingoModal();
+        });
+
+        // Initialize
+        loadState();
+        updateButtonStates();
+        renderBoard();
+    </script>
+</body>
+</html>
