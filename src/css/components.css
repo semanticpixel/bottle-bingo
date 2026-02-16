@@ -55,9 +55,9 @@
   .game-screen {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     flex: 1;
     min-height: 0;
+    padding-block-end: 0.5rem;
   }
 
   .game-header {
@@ -118,7 +118,6 @@
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(5, 1fr);
     gap: 0.5rem;
-    overflow: hidden;
     flex: 1;
     min-height: 0;
   }
