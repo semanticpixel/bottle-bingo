@@ -221,13 +221,8 @@ function openOverlay(index) {
   const bottle = gameState.board[index];
   overlayTitle.textContent = bottle.name;
 
-  // Create placeholder for demo
-  const placeholderColor = `linear-gradient(135deg, 
-          hsl(${index * 15}, 70%, 60%) 0%, 
-          hsl(${index * 15 + 30}, 70%, 50%) 100%)`;
-  overlayImage.style.background = placeholderColor;
-  overlayImage.style.height = "300px";
-  overlayImage.style.borderRadius = "8px";
+  overlayImage.src = `src/${bottle.image}`;
+  overlayImage.alt = bottle.name;
 
   const isCrossed = gameState.crossed[index];
   overlayToggleBtn.textContent = isCrossed ? "Unmark" : "Mark Found";
