@@ -42,7 +42,10 @@ Defined in `src/css/app.css`. The layer order controls specificity: reset < them
 `bottles.json` stores paths as `images/italicus.webp`. In `main.js`, images are referenced as `src/${bottle.image}` (resolving to `src/images/italicus.webp` relative to `index.html`).
 
 ### Bingo Cell Layout
-Each cell uses CSS grid with both the image and text label placed in `grid-area: 1 / 1` so they stack. The text label sits at the bottom (`align-self: end`) with a semi-transparent background. The image uses `object-fit: contain` and fills the cell.
+Each cell uses CSS grid with both the image and text label placed in `grid-area: 1 / 1` so they stack. Cells have `aspect-ratio: 1` so all cards are uniform squares — the image never drives the cell size. The image uses `object-fit: contain` with `min-height: 0` / `min-width: 0` to stay constrained. The text label sits at the bottom (`align-self: end`) with a semi-transparent background and its own padding (the cell itself has no padding).
+
+### CSS Design Tokens
+Semantic background tokens are defined in `theme.css` under `--bg-*` (e.g. `--bg-card`, `--bg-page`, `--bg-label`). Use these instead of hardcoding colors in component styles.
 
 ### State Management
 A single `gameState` object holds all state: `board` (25 bottles), `crossed` (25 booleans), `gameStarted`, `boardsUsedToday`, `lastResetDate`. Stored in localStorage under key `bottleBingoState`.
@@ -58,7 +61,7 @@ Users get 3 new boards per day. Getting a bingo resets this counter.
 3. Also add to `bottles.json` for consistency (currently not imported at runtime)
 
 ### Modifying styles
-- Theme variables (spacing, fonts): `src/css/theme.css`
+- Theme variables (spacing, fonts, background tokens): `src/css/theme.css`
 - Component styles (grid, cells, buttons, overlay): `src/css/components.css`
 - Base layout (body, header): `src/css/base.css`
 
