@@ -1,110 +1,114 @@
 [
   {
     "name": "Italicus",
-    "image": "images/italicus.jpg"
+    "image": "images/italicus.webp"
   },
   {
-    "name": "Empirical",
-    "image": "images/empirical.jpg"
+    "name": "Empirical Ayuuk",
+    "image": "images/empirical-ayuuk.webp"
   },
   {
     "name": "Sfumato",
-    "image": "images/sfumato.jpg"
+    "image": "images/sfumato.webp"
+  },
+  {
+    "name": "Empirical Symphony 6",
+    "image": "images/empirical-symphony6.webp"
   },
   {
     "name": "Nux Alpina",
-    "image": "images/nux-alpina.jpg"
+    "image": "images/nux-alpina.webp"
   },
   {
     "name": "El Buho",
-    "image": "images/el-buho.jpg"
+    "image": "images/el-buho.webp"
   },
   {
     "name": "Real McCoy",
-    "image": "images/real-mccoy.jpg"
+    "image": "images/real-mccoy.webp"
   },
   {
     "name": "Giffard Passion Fruit",
-    "image": "images/giffard-passion.jpg"
+    "image": "images/giffard-passion.webp"
   },
   {
     "name": "Banana Liqueur",
-    "image": "images/banana-liqueur.jpg"
+    "image": "images/banana-liqueur.webp"
   },
   {
-    "name": "Alp Genepy",
-    "image": "images/alp-genepy.jpg"
+    "name": "Alpe Genepy",
+    "image": "images/alpe-genepy.webp"
   },
   {
     "name": "Jin Jiji",
-    "image": "images/jin-jiji.jpg"
+    "image": "images/jin-jiji.webp"
   },
   {
     "name": "Jaja",
-    "image": "images/jaja.jpg"
+    "image": "images/jaja.webp"
   },
   {
     "name": "Yola",
-    "image": "images/yola.jpg"
+    "image": "images/yola.webp"
   },
   {
     "name": "The Scarlet Ibis",
-    "image": "images/scarlet-ibis.jpg"
+    "image": "images/scarlet-ibis.webp"
   },
   {
     "name": "Tapatio 110",
-    "image": "images/tapatio-110.jpg"
+    "image": "images/tapatio-110.webp"
   },
   {
     "name": "Barrel Seagrass",
-    "image": "images/barrel-seagrass.jpg"
+    "image": "images/barrel-seagrass.webp"
   },
   {
     "name": "Giffard Grenadine",
-    "image": "images/giffard-grenadine.jpg"
+    "image": "images/giffard-grenadine.webp"
   },
   {
     "name": "Sirene Bitter",
-    "image": "images/sirene-bitter.jpg"
+    "image": "images/sirene-bitter.webp"
   },
   {
     "name": "Nixta",
-    "image": "images/nixta.jpg"
+    "image": "images/nixta.webp"
   },
   {
-    "name": "Ancho Reyes",
-    "image": "images/ancho-reyes.jpg"
+    "name": "Ancho Reyes Verde",
+    "image": "images/ancho-reyes-verde.webp"
   },
   {
     "name": "Malort",
-    "image": "images/malort.jpg"
+    "image": "images/malort.webp"
   },
   {
     "name": "St George Terroir",
-    "image": "images/st-george.jpg"
+    "image": "images/st-george-terroir.webp"
   },
   {
     "name": "Braulio",
-    "image": "images/braulio.jpg"
+    "image": "images/braulio.webp"
   },
   {
     "name": "Becherovka",
-    "image": "images/becherovka.jpg"
+    "image": "images/becherovka.webp"
   },
   {
     "name": "Mekhong",
-    "image": "images/mekhong.jpg"
+    "image": "images/mekhong.webp"
   },
   {
     "name": "Tempus Fugit Spirits Liqueur De Violettes",
-    "image": "images/tempus-fugit.jpg"
+    "image": "images/tempus-fugit-violettes.webp"
   },
   {
     "name": "Pairideza Creme de Banane Liqueur",
-    "image": "images/pairideza.jpg"
+    "image": "images/pairideza-creme-de-banane.webp"
   },
   {
     "name": "Horse with No Name",
-    "image": "images/horse-no-name.jpg"
+    "image": "images/horse-no-name.webp"
   }
 ]
