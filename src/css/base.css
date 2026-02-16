@@ -9,6 +9,7 @@
   main {
     max-width: 600px;
     margin: 0 auto;
+    padding-inline: 0.5rem;
     height: 100dvh;
     display: flex;
     flex-direction: column;
