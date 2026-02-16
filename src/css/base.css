@@ -2,14 +2,16 @@
   body {
     font-family: var(--baseFont);
     background: var(--bg-page);
-    min-height: 100dvh;
     color: white;
-    padding: var(--spacing-2);
+    margin: 0;
   }
 
   main {
     max-width: 600px;
     margin: 0 auto;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
   }
 
   header {
