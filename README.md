@@ -25,18 +25,27 @@ A fun mobile web app for spotting obscure and common spirit bottles at bars with
 bottle-bingo/
 ├── index.html          # Main game file
 ├── bottles.json        # Bottle database
-├── images/            # Bottle images folder
-│   ├── italicus.jpg
-│   ├── empirical.jpg
-│   └── ...
-└── README.md          # This file
+├── src/
+│   ├── js/
+│   │   └── main.js     # Game logic and state management
+│   ├── css/
+│   │   ├── app.css     # CSS layer imports
+│   │   ├── reset.css   # CSS reset
+│   │   ├── theme.css   # CSS custom properties
+│   │   ├── base.css    # Base styles
+│   │   ├── components.css # Component styles
+│   │   └── utilities.css  # Utility classes
+│   └── images/         # Bottle images (WebP)
+├── CLAUDE.md           # Development context for AI assistants
+├── LICENSE             # MIT License
+└── README.md           # This file
 ```
 
 ## Setup
 
 1. Create a new GitHub repository
 2. Upload these files to the repository
-3. Create an `images/` folder and add your bottle images
+3. Add your bottle images (WebP format) to `src/images/`
 4. Enable GitHub Pages:
    - Go to Settings > Pages
    - Select "Deploy from a branch"
@@ -47,12 +56,12 @@ Your app will be live at: `https://[your-username].github.io/[repo-name]/`
 
 ## Adding Bottles
 
-Edit `bottles.json` and add bottle images to the `images/` folder:
+Edit the `BOTTLES` array in `src/js/main.js` and add bottle images (WebP) to `src/images/`:
 
 ```json
 {
   "name": "Your Bottle Name",
-  "image": "images/your-bottle.jpg"
+  "image": "images/your-bottle.webp"
 }
 ```
 
@@ -88,7 +97,7 @@ Your progress persists across sessions!
 
 ## Customization
 
-The app uses native CSS with CSS custom properties. Main colors are defined in the gradient styles and can be easily modified in the `<style>` section.
+The app uses native CSS with CSS Cascade Layers and custom properties. Styles are organized across multiple files in `src/css/`. Theme variables are in `theme.css` and component styles in `components.css`.
 
 ## Future Enhancements
 
