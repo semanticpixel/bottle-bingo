@@ -106,6 +106,7 @@ const DEFAULT_STATE = {
   boardsUsedToday: 0,
   lastResetDate: null,
   difficulty: DEFAULT_DIFFICULTY,
+  hasCelebrated: false, // guards against re-opening the bingo modal on every mark
 };
 
 let gameState = { ...DEFAULT_STATE };
@@ -167,6 +168,7 @@ function setDifficulty(difficulty) {
   gameState.difficulty = difficulty;
   gameState.board = buildBoard();
   gameState.crossed = new Array(BOARD_SIZE).fill(false);
+  gameState.hasCelebrated = false;
   saveState();
   renderDifficultyToggle();
   renderBoard();
@@ -193,14 +195,27 @@ function updateButtonStates() {
 function loadState() {
   const saved = localStorage.getItem("bottleBingoState");
   if (saved) {
-    // Merge over defaults so fields added in newer versions (e.g. difficulty)
-    // always resolve for returning players instead of being undefined.
-    gameState = { ...DEFAULT_STATE, ...JSON.parse(saved) };
-    checkDailyReset();
-  } else {
-    // First time - generate initial board
-    generateBoard();
+    try {
+      const parsed = JSON.parse(saved);
+      if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.board)) {
+        throw new Error("unexpected shape");
+      }
+      // Merge over defaults so fields added in newer versions (e.g. difficulty)
+      // always resolve for returning players instead of being undefined.
+      gameState = { ...DEFAULT_STATE, ...parsed };
+      checkDailyReset();
+      if (gameState.board.length) return;
+      // Fall through to generate a board if the saved one was empty.
+    } catch (err) {
+      // Corrupt or incompatible saved state: discard it and start fresh
+      // instead of letting the app fail to load.
+      console.warn("Discarding corrupt saved state:", err);
+      localStorage.removeItem("bottleBingoState");
+      gameState = { ...DEFAULT_STATE };
+    }
   }
+  // First time (or recovered from bad state) - generate initial board
+  generateBoard();
 }
 
 // Save state to localStorage
@@ -271,6 +286,7 @@ function generateBoard() {
   gameState.board = buildBoard();
   gameState.crossed = new Array(BOARD_SIZE).fill(false);
   gameState.gameStarted = false;
+  gameState.hasCelebrated = false;
   gameState.boardsUsedToday++;
   saveState();
   updateButtonStates();
@@ -295,14 +311,14 @@ function startGame() {
 function endGame() {
   if (
     confirm(
-      "Are you sure you want to end the current game? A new board will be generated."
+      "End the current game? Your marks will be cleared. Use New Board for a fresh board."
     )
   ) {
+    // Return to the not-started state on the same board. Rerolling here would
+    // hand out unlimited boards for free — New Board is the limit-enforced path.
     gameState.gameStarted = false;
     gameState.crossed = new Array(BOARD_SIZE).fill(false);
-
-    // Generate new board
-    gameState.board = buildBoard();
+    gameState.hasCelebrated = false;
 
     saveState();
     updateButtonStates();
@@ -420,7 +436,13 @@ function checkBingo() {
 
   if (hasBingo) {
     bingoStatus.classList.remove("hidden");
-    showBingoModal();
+    // Only celebrate on the transition into a bingo, not on every subsequent
+    // mark while the winning line still stands.
+    if (!gameState.hasCelebrated) {
+      gameState.hasCelebrated = true;
+      saveState();
+      showBingoModal();
+    }
   } else {
     bingoStatus.classList.add("hidden");
   }
@@ -438,14 +460,12 @@ function closeBingoModal() {
 
 // Start new game after bingo
 function startNewGame() {
-  // Reset daily limit since they got bingo
+  // Getting a bingo resets the daily limit as a reward.
   gameState.boardsUsedToday = 0;
-  gameState.gameStarted = false;
-  gameState.crossed = new Array(BOARD_SIZE).fill(false);
-  saveState();
   closeBingoModal();
-  updateButtonStates();
-  renderBoard();
+  // Deal a genuinely new board (respects difficulty, resets marks + celebrate
+  // flag, and counts as the day's first board via generateBoard).
+  generateBoard();
 }
 
 // Event listeners
