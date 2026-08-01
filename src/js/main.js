@@ -124,6 +124,7 @@ const overlayTitle = document.getElementById("overlayTitle");
 const overlayToggleBtn = document.getElementById("overlayToggleBtn");
 const bingoModal = document.getElementById("bingoModal");
 const newGameBtn = document.getElementById("newGameBtn");
+const difficultyToggle = document.getElementById("difficultyToggle");
 
 let currentOverlayIndex = null;
 
@@ -145,6 +146,30 @@ function updateBoardLimitDisplay() {
     gameState.boardsUsedToday >= MAX_DAILY_BOARDS;
 }
 
+// Reflect the selected difficulty and lock the toggle during an active game.
+function renderDifficultyToggle() {
+  difficultyToggle.querySelectorAll(".diff-seg").forEach((seg) => {
+    const active = seg.dataset.difficulty === gameState.difficulty;
+    seg.classList.toggle("active", active);
+    seg.setAttribute("aria-pressed", String(active));
+    seg.disabled = gameState.gameStarted;
+  });
+}
+
+// Switch difficulty and re-roll the board. Re-rolling difficulty is free — only
+// the explicit New Board button consumes a daily board.
+function setDifficulty(difficulty) {
+  if (!DIFFICULTIES[difficulty] || difficulty === gameState.difficulty) return;
+  if (gameState.gameStarted) return; // can't swap mid-game
+
+  gameState.difficulty = difficulty;
+  gameState.board = buildBoard();
+  gameState.crossed = new Array(BOARD_SIZE).fill(false);
+  saveState();
+  renderDifficultyToggle();
+  renderBoard();
+}
+
 // Update button states
 function updateButtonStates() {
   if (gameState.gameStarted) {
@@ -159,6 +184,7 @@ function updateButtonStates() {
     endGameBtn.classList.add("hidden");
   }
   updateBoardLimitDisplay();
+  renderDifficultyToggle();
 }
 
 // Load state from localStorage
@@ -433,6 +459,10 @@ overlayToggleBtn.addEventListener("click", toggleCrossed);
 newGameBtn.addEventListener("click", startNewGame);
 bingoModal.addEventListener("click", (e) => {
   if (e.target === bingoModal) closeBingoModal();
+});
+difficultyToggle.addEventListener("click", (e) => {
+  const seg = e.target.closest(".diff-seg");
+  if (seg) setDifficulty(seg.dataset.difficulty);
 });
 
 // Initialize

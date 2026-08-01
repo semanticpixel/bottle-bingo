@@ -12,6 +12,8 @@
 
     /* Colors */
     --text-on-card: #1e3a5f; /* dark label text on white cards (imageless bottles) */
+    --accent: #8b5cf6; /* active/selected UI (difficulty segment) */
+    --bg-segment: rgba(255, 255, 255, 0.1); /* inactive segmented-control button */
 
     /* Spacing */
     --spacing-1: 0.25rem;
