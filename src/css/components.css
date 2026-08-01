@@ -184,6 +184,19 @@
     -webkit-box-orient: vertical;
   }
 
+  /* Text-only card: bottle has no image yet (or it failed to load). The label
+     fills and centers the white card instead of sitting in a bottom strip. */
+  .bingo-cell.no-image .bottle-name {
+    align-self: center;
+    background: transparent;
+    color: var(--text-on-card);
+    font-weight: 600;
+    font-size: clamp(0.7rem, 2vw + 0.25rem, 1rem);
+    padding: 0.5rem;
+    overflow-wrap: break-word;
+    -webkit-line-clamp: 4;
+  }
+
   /* Overlay */
   .overlay {
     display: none;

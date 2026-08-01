@@ -1,114 +1,59 @@
 [
-  {
-    "name": "Italicus",
-    "image": "images/italicus.webp"
-  },
-  {
-    "name": "Empirical Ayuuk",
-    "image": "images/empirical-ayuuk.webp"
-  },
-  {
-    "name": "Sfumato",
-    "image": "images/sfumato.webp"
-  },
-  {
-    "name": "Empirical Symphony 6",
-    "image": "images/empirical-symphony6.webp"
-  },
-  {
-    "name": "Nux Alpina",
-    "image": "images/nux-alpina.webp"
-  },
-  {
-    "name": "El Buho",
-    "image": "images/el-buho.webp"
-  },
-  {
-    "name": "Real McCoy",
-    "image": "images/real-mccoy.webp"
-  },
-  {
-    "name": "Giffard Passion Fruit",
-    "image": "images/giffard-passion.webp"
-  },
-  {
-    "name": "Banana Liqueur",
-    "image": "images/banana-liqueur.webp"
-  },
-  {
-    "name": "Alpe Genepy",
-    "image": "images/alpe-genepy.webp"
-  },
-  {
-    "name": "Jin Jiji",
-    "image": "images/jin-jiji.webp"
-  },
-  {
-    "name": "Jaja",
-    "image": "images/jaja.webp"
-  },
-  {
-    "name": "Yola",
-    "image": "images/yola.webp"
-  },
-  {
-    "name": "The Scarlet Ibis",
-    "image": "images/scarlet-ibis.webp"
-  },
-  {
-    "name": "Tapatio 110",
-    "image": "images/tapatio-110.webp"
-  },
-  {
-    "name": "Barrel Seagrass",
-    "image": "images/barrel-seagrass.webp"
-  },
-  {
-    "name": "Giffard Grenadine",
-    "image": "images/giffard-grenadine.webp"
-  },
-  {
-    "name": "Sirene Bitter",
-    "image": "images/sirene-bitter.webp"
-  },
-  {
-    "name": "Nixta",
-    "image": "images/nixta.webp"
-  },
-  {
-    "name": "Ancho Reyes Verde",
-    "image": "images/ancho-reyes-verde.webp"
-  },
-  {
-    "name": "Malort",
-    "image": "images/malort.webp"
-  },
-  {
-    "name": "St George Terroir",
-    "image": "images/st-george-terroir.webp"
-  },
-  {
-    "name": "Braulio",
-    "image": "images/braulio.webp"
-  },
-  {
-    "name": "Becherovka",
-    "image": "images/becherovka.webp"
-  },
-  {
-    "name": "Mekhong",
-    "image": "images/mekhong.webp"
-  },
-  {
-    "name": "Tempus Fugit Spirits Liqueur De Violettes",
-    "image": "images/tempus-fugit-violettes.webp"
-  },
-  {
-    "name": "Pairideza Creme de Banane Liqueur",
-    "image": "images/pairideza-creme-de-banane.webp"
-  },
-  {
-    "name": "Horse with No Name",
-    "image": "images/horse-no-name.webp"
-  }
+  { "name": "Italicus", "image": "images/italicus.webp", "weight": 3 },
+  { "name": "Empirical Ayuuk", "image": "images/empirical-ayuuk.webp", "weight": 1 },
+  { "name": "Sfumato", "image": "images/sfumato.webp", "weight": 1 },
+  { "name": "Empirical Symphony 6", "image": "images/empirical-symphony6.webp", "weight": 1 },
+  { "name": "Nux Alpina", "image": "images/nux-alpina.webp", "weight": 1 },
+  { "name": "El Buho", "image": "images/el-buho.webp", "weight": 2 },
+  { "name": "Real McCoy", "image": "images/real-mccoy.webp", "weight": 3 },
+  { "name": "Giffard Passion Fruit", "image": "images/giffard-passion.webp", "weight": 3 },
+  { "name": "Banana Liqueur", "image": "images/banana-liqueur.webp", "weight": 3 },
+  { "name": "Alpe Genepy", "image": "images/alpe-genepy.webp", "weight": 2 },
+  { "name": "Jin Jiji", "image": "images/jin-jiji.webp", "weight": 2 },
+  { "name": "Jaja", "image": "images/jaja.webp", "weight": 2 },
+  { "name": "Yola", "image": "images/yola.webp", "weight": 2 },
+  { "name": "The Scarlet Ibis", "image": "images/scarlet-ibis.webp", "weight": 2 },
+  { "name": "Tapatio 110", "image": "images/tapatio-110.webp", "weight": 3 },
+  { "name": "Barrel Seagrass", "image": "images/barrel-seagrass.webp", "weight": 2 },
+  { "name": "Giffard Grenadine", "image": "images/giffard-grenadine.webp", "weight": 2 },
+  { "name": "Sirene Bitter", "image": "images/sirene-bitter.webp", "weight": 2 },
+  { "name": "Nixta", "image": "images/nixta.webp", "weight": 2 },
+  { "name": "Ancho Reyes Verde", "image": "images/ancho-reyes-verde.webp", "weight": 3 },
+  { "name": "Malort", "image": "images/malort.webp", "weight": 2 },
+  { "name": "St George Terroir", "image": "images/st-george-terroir.webp", "weight": 3 },
+  { "name": "Braulio", "image": "images/braulio.webp", "weight": 2 },
+  { "name": "Becherovka", "image": "images/becherovka.webp", "weight": 2 },
+  { "name": "Mekhong", "image": "images/mekhong.webp", "weight": 2 },
+  { "name": "Tempus Fugit Violettes", "image": "images/tempus-fugit-violettes.webp", "weight": 1 },
+  { "name": "Pairideza Creme de Banane", "image": "images/pairideza-creme-de-banane.webp", "weight": 1 },
+  { "name": "Horse with No Name", "image": "images/horse-no-name.webp", "weight": 1 },
+  { "name": "Campari", "image": "images/campari.webp", "weight": 5 },
+  { "name": "Hendrick's Gin", "image": "images/hendricks.webp", "weight": 5 },
+  { "name": "Bulleit Bourbon", "image": "images/bulleit-bourbon.webp", "weight": 5 },
+  { "name": "Beefeater", "image": "images/beefeater.webp", "weight": 5 },
+  { "name": "Green Chartreuse", "image": "images/green-chartreuse.webp", "weight": 4 },
+  { "name": "Cynar", "image": "images/cynar.webp", "weight": 4 },
+  { "name": "Amaro Montenegro", "image": "images/amaro-montenegro.webp", "weight": 4 },
+  { "name": "Luxardo Maraschino", "image": "images/luxardo-maraschino.webp", "weight": 4 },
+  { "name": "Averna", "image": "images/averna.webp", "weight": 4 },
+  { "name": "Tapatío", "image": "images/tapatio.webp", "weight": 4 },
+  { "name": "Curaçao", "image": "images/curacao.webp", "weight": 4 },
+  { "name": "Bulleit Rye", "image": "images/bulleit-rye.webp", "weight": 4 },
+  { "name": "Four Roses", "image": "images/four-roses.webp", "weight": 4 },
+  { "name": "Yellow Chartreuse", "image": "images/yellow-chartreuse.webp", "weight": 3 },
+  { "name": "Amaro Nonino", "image": "images/amaro-nonino.webp", "weight": 3 },
+  { "name": "Probitas", "image": "images/probitas.webp", "weight": 3 },
+  { "name": "Madre Mezcal", "image": "images/madre-mezcal.webp", "weight": 3 },
+  { "name": "Tequila Ocho", "image": "images/tequila-ocho.webp", "weight": 3 },
+  { "name": "Fortaleza", "image": "images/fortaleza.webp", "weight": 3 },
+  { "name": "Suze", "image": "images/suze.webp", "weight": 3 },
+  { "name": "Lalo", "image": "images/lalo.webp", "weight": 3 },
+  { "name": "Giffard Banane du Brésil", "image": "images/giffard-banane.webp", "weight": 3 },
+  { "name": "Giffard Menthe-Pastille", "image": "images/giffard-menthe-pastille.webp", "weight": 3 },
+  { "name": "Giffard Crème de Pêche", "image": "images/giffard-creme-de-peche.webp", "weight": 3 },
+  { "name": "Giffard Apricot", "image": "images/giffard-apricot.webp", "weight": 3 },
+  { "name": "Mal Bien", "image": "images/mal-bien.webp", "weight": 2 },
+  { "name": "Cynar 70", "image": "images/cynar-70.webp", "weight": 2 },
+  { "name": "Gran Malo Tamarind", "image": "images/gran-malo.webp", "weight": 1 },
+  { "name": "Zucca Amaro", "image": "images/zucca.webp", "weight": 1 }
 ]

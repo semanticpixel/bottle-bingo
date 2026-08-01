@@ -11,6 +11,7 @@
     --bg-label: rgba(0, 0, 0, 0.6);
 
     /* Colors */
+    --text-on-card: #1e3a5f; /* dark label text on white cards (imageless bottles) */
 
     /* Spacing */
     --spacing-1: 0.25rem;

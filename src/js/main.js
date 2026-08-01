@@ -37,6 +37,36 @@ const BOTTLES = [
   { name: "Tempus Fugit Violettes", image: "images/tempus-fugit-violettes.webp", weight: 1 },
   { name: "Pairideza Creme de Banane", image: "images/pairideza-creme-de-banane.webp", weight: 1 },
   { name: "Horse with No Name", image: "images/horse-no-name.webp", weight: 1 },
+  // Common bar staples (images may not exist yet — render as text cards until added).
+  { name: "Campari", image: "images/campari.webp", weight: 5 },
+  { name: "Hendrick's Gin", image: "images/hendricks.webp", weight: 5 },
+  { name: "Bulleit Bourbon", image: "images/bulleit-bourbon.webp", weight: 5 },
+  { name: "Beefeater", image: "images/beefeater.webp", weight: 5 },
+  { name: "Green Chartreuse", image: "images/green-chartreuse.webp", weight: 4 },
+  { name: "Cynar", image: "images/cynar.webp", weight: 4 },
+  { name: "Amaro Montenegro", image: "images/amaro-montenegro.webp", weight: 4 },
+  { name: "Luxardo Maraschino", image: "images/luxardo-maraschino.webp", weight: 4 },
+  { name: "Averna", image: "images/averna.webp", weight: 4 },
+  { name: "Tapatío", image: "images/tapatio.webp", weight: 4 },
+  { name: "Curaçao", image: "images/curacao.webp", weight: 4 },
+  { name: "Bulleit Rye", image: "images/bulleit-rye.webp", weight: 4 },
+  { name: "Four Roses", image: "images/four-roses.webp", weight: 4 },
+  { name: "Yellow Chartreuse", image: "images/yellow-chartreuse.webp", weight: 3 },
+  { name: "Amaro Nonino", image: "images/amaro-nonino.webp", weight: 3 },
+  { name: "Probitas", image: "images/probitas.webp", weight: 3 },
+  { name: "Madre Mezcal", image: "images/madre-mezcal.webp", weight: 3 },
+  { name: "Tequila Ocho", image: "images/tequila-ocho.webp", weight: 3 },
+  { name: "Fortaleza", image: "images/fortaleza.webp", weight: 3 },
+  { name: "Suze", image: "images/suze.webp", weight: 3 },
+  { name: "Lalo", image: "images/lalo.webp", weight: 3 },
+  { name: "Giffard Banane du Brésil", image: "images/giffard-banane.webp", weight: 3 },
+  { name: "Giffard Menthe-Pastille", image: "images/giffard-menthe-pastille.webp", weight: 3 },
+  { name: "Giffard Crème de Pêche", image: "images/giffard-creme-de-peche.webp", weight: 3 },
+  { name: "Giffard Apricot", image: "images/giffard-apricot.webp", weight: 3 },
+  { name: "Mal Bien", image: "images/mal-bien.webp", weight: 2 },
+  { name: "Cynar 70", image: "images/cynar-70.webp", weight: 2 },
+  { name: "Gran Malo Tamarind", image: "images/gran-malo.webp", weight: 1 },
+  { name: "Zucca Amaro", image: "images/zucca.webp", weight: 1 },
 ];
 
 const MAX_DAILY_BOARDS = 3;
@@ -48,8 +78,8 @@ const BOARD_SIZE = 25;
 const DIFFICULTIES = {
   "new-york": {
     label: "New York",
-    eligible: (w) => w >= 4, // only the "every NYC bar has it" bottles
-    score: (w) => w,
+    eligible: (w) => w >= 3, // exclude the rare/esoteric; only stocked-everywhere bottles
+    score: (w) => w ** 2, // among those, the most common dominate
   },
   "one-night": {
     label: "One Night",
@@ -262,19 +292,16 @@ function renderBoard() {
       cell.classList.add("crossed");
     }
 
-    // For demo, use placeholder image
-    // const img = document.createElement("div");
-    // img.className = "bottle-image";
-    // img.style.background = `linear-gradient(135deg, 
-    //           hsl(${index * 15}, 70%, 60%) 0%, 
-    //           hsl(${index * 15 + 30}, 70%, 50%) 100%)`;
-    // img.style.borderRadius = "4px";
-
     const img = document.createElement("img");
     img.src = `src/${bottle.image}`;
     img.alt = bottle.name;
     img.className = "bottle-image";
-    // img.style.borderRadius = "4px";
+    // No image on disk yet: drop the broken <img> and let the label fill the
+    // card. Adding the real .webp later auto-upgrades it — no code change.
+    img.onerror = () => {
+      cell.classList.add("no-image");
+      img.remove();
+    };
 
     const name = document.createElement("div");
     name.className = "bottle-name";
@@ -299,6 +326,9 @@ function openOverlay(index) {
   const bottle = gameState.board[index];
   overlayTitle.textContent = bottle.name;
 
+  // Hide the image if it fails to load so the title still reads cleanly.
+  overlayImage.classList.remove("hidden");
+  overlayImage.onerror = () => overlayImage.classList.add("hidden");
   overlayImage.src = `src/${bottle.image}`;
   overlayImage.alt = bottle.name;
 
