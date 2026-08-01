@@ -76,11 +76,6 @@ const BOARD_SIZE = 25;
 // commonness into a selection weight; `eligible(weight)` optionally restricts
 // the pool. Higher score = more likely to be drawn.
 const DIFFICULTIES = {
-  "new-york": {
-    label: "New York",
-    eligible: (w) => w >= 3, // exclude the rare/esoteric; only stocked-everywhere bottles
-    score: (w) => w ** 2, // among those, the most common dominate
-  },
   "one-night": {
     label: "One Night",
     score: (w) => w ** 2, // strongly favor common
@@ -92,6 +87,13 @@ const DIFFICULTIES = {
   "one-week": {
     label: "One Week",
     score: (w) => (6 - w) ** 2, // strongly favor rare/esoteric
+  },
+  "new-york": {
+    label: "New York",
+    // Hardest: NYC bars stock everything, so the challenge is a board of only
+    // the rare/esoteric bottles. Restrict to the rare pool (weight <= 2).
+    eligible: (w) => w <= 2,
+    score: (w) => (6 - w) ** 2, // among those, the rarest dominate
   },
 };
 const DEFAULT_DIFFICULTY = "one-night";
