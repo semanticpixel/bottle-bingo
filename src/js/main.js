@@ -98,6 +98,11 @@ const DIFFICULTIES = {
 };
 const DEFAULT_DIFFICULTY = "one-night";
 
+// Bar-hop mode: you can only mark a handful of bottles at each bar, so
+// completing a board means visiting several bars.
+const MARKS_PER_BAR = 5; // bottles markable at a single bar
+const NEW_BAR_METERS = 60; // must move at least this far (GPS) to check in at a new bar
+
 // State management
 const DEFAULT_STATE = {
   board: [],
@@ -107,6 +112,11 @@ const DEFAULT_STATE = {
   lastResetDate: null,
   difficulty: DEFAULT_DIFFICULTY,
   hasCelebrated: false, // guards against re-opening the bingo modal on every mark
+  // Bar-hop mode
+  locationMode: false,
+  barsVisited: 0,
+  marksThisBar: 0, // marks made since the last check-in / board reset
+  barAnchor: null, // {lat, lng} of the current bar's check-in, or null in manual mode
 };
 
 let gameState = { ...DEFAULT_STATE };
@@ -128,8 +138,134 @@ const overlayToggleBtn = document.getElementById("overlayToggleBtn");
 const bingoModal = document.getElementById("bingoModal");
 const newGameBtn = document.getElementById("newGameBtn");
 const difficultyToggle = document.getElementById("difficultyToggle");
+const locationToggleBtn = document.getElementById("locationToggleBtn");
+const locationStatus = document.getElementById("locationStatus");
+const newBarBtn = document.getElementById("newBarBtn");
+const locationMsg = document.getElementById("locationMsg");
+const overlayCapNote = document.getElementById("overlayCapNote");
 
 let currentOverlayIndex = null;
+let locationMsgTimer = null;
+
+// ---- Bar-hop mode (geolocation) ----
+
+// Promise wrapper around the Geolocation API. Resolves {lat, lng}, rejects on
+// error / denial / unsupported.
+function getPosition() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation is not supported"));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (err) => reject(err),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  });
+}
+
+// Great-circle distance between two {lat, lng} points, in meters (haversine).
+function distanceMeters(a, b) {
+  const R = 6371000;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+// Transient status message under the location bar.
+function flashLocation(msg) {
+  locationMsg.textContent = msg;
+  locationMsg.classList.remove("hidden");
+  clearTimeout(locationMsgTimer);
+  locationMsgTimer = setTimeout(() => locationMsg.classList.add("hidden"), 4000);
+}
+
+// Reflect bar-hop state in the UI.
+function renderLocation() {
+  const on = gameState.locationMode;
+  locationToggleBtn.classList.toggle("active", on);
+  locationToggleBtn.setAttribute("aria-pressed", String(on));
+  locationToggleBtn.textContent = on ? "📍 Bar-hop: On" : "📍 Bar-hop: Off";
+  locationStatus.classList.toggle("hidden", !on);
+  newBarBtn.classList.toggle("hidden", !on);
+  if (on) {
+    const manual = gameState.barAnchor ? "" : " · manual";
+    locationStatus.textContent =
+      `Bar ${gameState.barsVisited}${manual} — ${gameState.marksThisBar}/${MARKS_PER_BAR} spotted here`;
+  }
+}
+
+// Turn bar-hop mode on/off. Enabling anchors the first bar via GPS (falling
+// back to manual check-ins if location is denied/unavailable).
+async function toggleLocationMode() {
+  if (gameState.locationMode) {
+    gameState.locationMode = false;
+    saveState();
+    renderLocation();
+    return;
+  }
+
+  gameState.locationMode = true;
+  gameState.barsVisited = 1;
+  gameState.marksThisBar = 0;
+  gameState.barAnchor = null;
+  locationToggleBtn.disabled = true;
+  try {
+    gameState.barAnchor = await getPosition();
+    flashLocation(`Checked in at bar 1. Mark up to ${MARKS_PER_BAR} bottles here.`);
+  } catch (err) {
+    // Denied / unavailable: still usable via the honor-system New bar button.
+    flashLocation("Location unavailable — using manual check-ins.");
+  } finally {
+    locationToggleBtn.disabled = false;
+  }
+  saveState();
+  renderLocation();
+}
+
+// Move to the next bar. With GPS, requires actually moving NEW_BAR_METERS from
+// the current anchor; without GPS, it's a manual (honor-system) reset.
+async function checkInNewBar() {
+  if (!gameState.locationMode) return;
+
+  if (!gameState.barAnchor) {
+    gameState.barsVisited++;
+    gameState.marksThisBar = 0;
+    saveState();
+    renderLocation();
+    flashLocation(`Checked in at bar ${gameState.barsVisited}.`);
+    return;
+  }
+
+  newBarBtn.disabled = true;
+  try {
+    const pos = await getPosition();
+    const dist = distanceMeters(gameState.barAnchor, pos);
+    if (dist >= NEW_BAR_METERS) {
+      gameState.barsVisited++;
+      gameState.marksThisBar = 0;
+      gameState.barAnchor = pos;
+      saveState();
+      renderLocation();
+      flashLocation(`Checked in at bar ${gameState.barsVisited}.`);
+    } else {
+      flashLocation(
+        `Still near the last bar (~${Math.round(dist)}m). Move further to check in.`
+      );
+    }
+  } catch (err) {
+    flashLocation("Couldn't get your location. Try again.");
+  } finally {
+    newBarBtn.disabled = false;
+  }
+}
 
 // Check if we need to reset daily limit
 function checkDailyReset() {
@@ -169,8 +305,10 @@ function setDifficulty(difficulty) {
   gameState.board = buildBoard();
   gameState.crossed = new Array(BOARD_SIZE).fill(false);
   gameState.hasCelebrated = false;
+  gameState.marksThisBar = 0;
   saveState();
   renderDifficultyToggle();
+  renderLocation();
   renderBoard();
 }
 
@@ -189,6 +327,7 @@ function updateButtonStates() {
   }
   updateBoardLimitDisplay();
   renderDifficultyToggle();
+  renderLocation();
 }
 
 // Load state from localStorage
@@ -287,6 +426,7 @@ function generateBoard() {
   gameState.crossed = new Array(BOARD_SIZE).fill(false);
   gameState.gameStarted = false;
   gameState.hasCelebrated = false;
+  gameState.marksThisBar = 0; // fresh board = fresh per-bar allowance
   gameState.boardsUsedToday++;
   saveState();
   updateButtonStates();
@@ -319,6 +459,7 @@ function endGame() {
     gameState.gameStarted = false;
     gameState.crossed = new Array(BOARD_SIZE).fill(false);
     gameState.hasCelebrated = false;
+    gameState.marksThisBar = 0;
 
     saveState();
     updateButtonStates();
@@ -377,10 +518,19 @@ function openOverlay(index) {
   overlayImage.alt = bottle.name;
 
   const isCrossed = gameState.crossed[index];
+  // In bar-hop mode you can only mark up to MARKS_PER_BAR bottles per bar.
+  // Unmarking is always allowed; only new marks are gated.
+  const capReached =
+    gameState.locationMode &&
+    !isCrossed &&
+    gameState.marksThisBar >= MARKS_PER_BAR;
+
   overlayToggleBtn.textContent = isCrossed ? "Unmark" : "Mark Found";
   overlayToggleBtn.className = isCrossed
     ? "btn btn-primary"
     : "btn btn-secondary";
+  overlayToggleBtn.disabled = capReached;
+  overlayCapNote.classList.toggle("hidden", !capReached);
 
   overlay.classList.add("active");
 }
@@ -393,13 +543,32 @@ function closeOverlay() {
 
 // Toggle crossed state
 function toggleCrossed() {
-  if (currentOverlayIndex !== null) {
-    gameState.crossed[currentOverlayIndex] =
-      !gameState.crossed[currentOverlayIndex];
-    saveState();
-    renderBoard();
-    closeOverlay();
+  if (currentOverlayIndex === null) return;
+
+  const wasCrossed = gameState.crossed[currentOverlayIndex];
+  if (!wasCrossed) {
+    // Marking: enforce the per-bar cap (button is disabled at the cap, but
+    // guard here too).
+    if (gameState.locationMode && gameState.marksThisBar >= MARKS_PER_BAR) {
+      flashLocation(
+        `You've spotted ${MARKS_PER_BAR} bottles here — check in at a new bar to mark more.`
+      );
+      return;
+    }
+    gameState.crossed[currentOverlayIndex] = true;
+    if (gameState.locationMode) gameState.marksThisBar++;
+  } else {
+    // Unmarking: always allowed; frees a per-bar slot.
+    gameState.crossed[currentOverlayIndex] = false;
+    if (gameState.locationMode) {
+      gameState.marksThisBar = Math.max(0, gameState.marksThisBar - 1);
+    }
   }
+
+  saveState();
+  renderBoard();
+  renderLocation();
+  closeOverlay();
 }
 
 // Check for bingo
@@ -486,8 +655,11 @@ difficultyToggle.addEventListener("click", (e) => {
   const seg = e.target.closest(".diff-seg");
   if (seg) setDifficulty(seg.dataset.difficulty);
 });
+locationToggleBtn.addEventListener("click", toggleLocationMode);
+newBarBtn.addEventListener("click", checkInNewBar);
 
 // Initialize
 loadState();
 updateButtonStates();
+renderLocation();
 renderBoard();

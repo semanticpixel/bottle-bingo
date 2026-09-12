@@ -149,6 +149,66 @@
     cursor: not-allowed;
   }
 
+  /* Bar-hop (location) bar */
+  .location-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .loc-toggle {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    background: var(--bg-segment);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .loc-toggle:hover:not(:disabled):not(.active) {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .loc-toggle.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
+  }
+
+  .loc-toggle:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .location-status {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .location-msg {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    background: var(--bg-segment);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .overlay-cap-note {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #fbbf24;
+    margin-top: 0.75rem;
+  }
+
   /* Bingo Grid */
   .bingo-grid {
     display: grid;

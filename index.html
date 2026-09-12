@@ -45,6 +45,15 @@
           <button class="diff-seg" type="button" data-difficulty="new-york">New York</button>
         </div>
 
+        <div class="location-bar" id="locationBar">
+          <button class="loc-toggle" type="button" id="locationToggleBtn" aria-pressed="false">
+            📍 Bar-hop: Off
+          </button>
+          <span class="location-status hidden" id="locationStatus"></span>
+          <button class="btn btn-small btn-secondary hidden" id="newBarBtn">New bar</button>
+        </div>
+        <p class="location-msg hidden" id="locationMsg" role="status" aria-live="polite"></p>
+
         <div class="bingo-grid" id="bingoGrid"></div>
       </div>
 
@@ -54,6 +63,9 @@
           <button class="overlay-close" id="overlayClose">×</button>
           <img class="overlay-image" id="overlayImage" src="" alt="" />
           <h2 class="overlay-title" id="overlayTitle"></h2>
+          <p class="overlay-cap-note hidden" id="overlayCapNote">
+            You've hit this bar's limit — check in at a new bar to mark more.
+          </p>
           <div class="overlay-actions">
             <button class="btn btn-secondary" id="overlayToggleBtn">
               Mark Found
